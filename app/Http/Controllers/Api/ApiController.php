@@ -31,6 +31,11 @@ class ApiController extends Controller
                     'user' => $user,
                     'token' => $user->createToken(time())->plainTextToken
                 ], 200);
+            }else{
+                return response()->json([
+                    'user' => 'null',
+                    'token' => 'null'
+                ], 200);
             }
         }else{
             return response()->json([
