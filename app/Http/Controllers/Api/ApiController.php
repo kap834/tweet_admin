@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -43,5 +44,25 @@ class ApiController extends Controller
             'token' => 'null'
         ], 200);
         }
+    }
+    public function post(Request $request){
+        $data = [
+            'text' => $request->text,
+        ];
+        if($request->hasFile('image')){
+            $imgName = uniqid() . $request->file('image')->getClientOriginalName();
+            $request->file('image')->storeAs('public', $imgName);
+            $data['image'] = $imgName ;
+        }
+        Post::create($data);
+        return response()->json([
+            'status' => 'success'
+        ]);
+    }
+    public function posts(){
+        $posts = Post::orderBy('created_at', 'desc')->get();
+        return response()->json([
+            'posts' => $posts
+        ], 200);
     }
 }
