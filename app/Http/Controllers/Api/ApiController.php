@@ -47,7 +47,8 @@ class ApiController extends Controller
     }
     public function post(Request $request){
         $data = [
-            'text' => $request->text,
+            'user_id' => $request->userId,
+            'text' => $request->text
         ];
         if($request->hasFile('image')){
             $imgName = uniqid() . $request->file('image')->getClientOriginalName();
@@ -60,7 +61,9 @@ class ApiController extends Controller
         ]);
     }
     public function posts(){
-        $posts = Post::orderBy('created_at', 'desc')->get();
+        $posts = Post::select('posts.*', 'users.name as userName' , 'users.image as userImage')
+                       ->leftJoin('users','posts.user_id','users.id')
+                       ->orderBy('posts.created_at', 'desc')->get();
         return response()->json([
             'posts' => $posts
         ], 200);
